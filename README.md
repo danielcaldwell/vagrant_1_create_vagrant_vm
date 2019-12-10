@@ -154,6 +154,14 @@ vagrant destroy
 
 This will delete the vagrant vm's and the Virtual Box Virtual Machines. 
 
+For example: 
+
+```
+$ vagrant destroy
+    vagrantmachine: Are you sure you want to destroy the 'vagrantmachine' VM? [y/N] y
+==> vagrantmachine: Forcing shutdown of VM...
+==> vagrantmachine: Destroying VM and associated drives...
+```
 
 ## Teardown a Vagrant VM from outside the Vagrantfile Directoryu
 
@@ -161,6 +169,77 @@ This will delete the vagrant vm's and the Virtual Box Virtual Machines.
 vagrant global-status
 vagrant destroy ####
 ```
+
+For example: 
+
+```
+$ vagrant destroy af2b909
+    vagrantmachine: Are you sure you want to destroy the 'vagrantmachine' VM? [y/N] y
+==> vagrantmachine: Forcing shutdown of VM...
+==> vagrantmachine: Destroying VM and associated drives...
+```
+
+# Troubleshooting
+
+## Checking VirtualBox for a Vagrant VM
+
+```
+vboxmanage list vms
+```
+This will list all the VirtualBox's Virtual Machines. Easy to access from the command line:
+
+```
+$ vboxmanage list vms
+"pgconfsv2015_default_1447673194608_60521" {1d729039-4254-4f5b-a72b-dbcbb88fe001}
+"vagrantmachine" {2378e4b9-7630-4369-9d87-7902a48a7bbb}
+```
+
+
+## Removing bad entries from global-status
+
+Soemtimes things go wrong and vagrant thinks there is a vm when there isn't.
+
+For example here I list all of my Vagrant Machines: 
+
+```
+$ vagrant global-status
+id       name           provider   state    directory                                                                    
+-------------------------------------------------------------------------------------------------------------------------
+690e028  default        virtualbox poweroff /Users/daniel/github/pgconfsv2015             
+370eaad  vagrantmachine virtualbox running  /Users/daniel/github/vagrant_1_create_vagrant_vm                  
+af2b909  vagrantmachine virtualbox running  /Users/daniel/github/vagrant_1_create_vagrant_vm/2_single_machine 
+```
+
+I had moved the Vagrantfile into it's own directory so I could show the difference between the default and the one I create. When I tried to remove it, I get this error: 
+
+```
+$ vagrant destroy 370eaad
+The machine with the name 'vagrantmachine' was not found configured for
+this Vagrant environment.
+```
+
+So, I pruned the global-status list using the `--prune` option: 
+
+```
+vagrant global-status --prune
+```
+
+Now the vm is no longer there
+```
+$ vagrant global-status 
+id       name           provider   state    directory                                                                    
+-------------------------------------------------------------------------------------------------------------------------
+690e028  default        virtualbox poweroff /Users/dcaldwel/github/pgconfsv2015                          
+af2b909  vagrantmachine virtualbox running  /Users/dcaldwel/github/vagrant_1_create_vagrant_vm/2_single_machine 
+ 
+The above shows information about all known Vagrant environments
+on this machine. This data is cached and may not be completely
+up-to-date. To interact with any of the machines, you can go to
+that directory and run Vagrant, or you can use the ID directly
+with Vagrant commands from any directory. For example:
+"vagrant destroy 1a2b3c4d"
+```
+
 
 
 
