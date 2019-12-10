@@ -1,0 +1,23 @@
+BOX_IMAGE = "ubuntu/bionic64" # DEC: Upgraded to this 18.04.03 Image. It worked :D
+BOX_TIMEOUT = 60
+NODE_COUNT = 3
+
+Vagrant.configure("2") do |config|
+
+   (1..NODE_COUNT).each do |i|
+      config.vm.define "node-#{i}" do |box_node|
+         box_node.vm.boot_timeout = BOX_TIMEOUT
+         box_node.vm.box = BOX_IMAGE
+         box_node.vm.hostname = "node-#{i}"
+         box_node.vm.network :private_network, ip: "10.0.0.#{i+10}"
+      
+         box_node.vm.provider "virtualbox" do |vbox_node|
+            vbox_node.name = "node-#{i}"
+            vbox_node.memory = 2000
+            vbox_node.cpus = 1
+         end
+      end
+   end 
+
+end
+
